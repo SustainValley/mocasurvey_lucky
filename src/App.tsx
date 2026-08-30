@@ -256,7 +256,7 @@ function LoginScreen({
       <div className="login-app-shell simple-login-shell">
         <div className="simple-login-copy">
           <p className="login-hero-kicker">오늘의 CAFE MOCA</p>
-          <h1>럭키드로우에<br />참여해볼까요?</h1>
+          <h1>럭키드로우에 참여해볼까요?</h1>
           <p className="login-hero-description">
             온라인 설문과 오프라인 부스 참여를<br />모두 완료한 학우만 참여할 수 있어요.
           </p>
