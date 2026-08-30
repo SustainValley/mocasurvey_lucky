@@ -262,10 +262,6 @@ function LoginScreen({
           </p>
         </div>
 
-        <img className="login-bean login-bean-1" src={figmaAssets.bean1} alt="" draggable={false} aria-hidden="true" />
-        <img className="login-bean login-bean-2" src={figmaAssets.bean2} alt="" draggable={false} aria-hidden="true" />
-        <img className="login-bean login-bean-3" src={figmaAssets.bean3} alt="" draggable={false} aria-hidden="true" />
-
         <form className="login-panel simple-login-panel" onSubmit={onSubmit}>
           <p className="login-panel-kicker">참여 확인</p>
           <h2>학번을 입력해주세요.</h2>
@@ -322,7 +318,6 @@ function ResultScreen({
         <p className="result-celebrate">LUCKY YOU!</p>
         <h1 id="result-title">{prize.label} 당첨!</h1>
         <p className="result-prize">{result.prize_name || prize.name}</p>
-        <p className="result-short-help">축하합니다! 운영진에게 이 화면을 보여주세요.</p>
       </div>
     </div>
   );

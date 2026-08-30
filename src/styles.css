@@ -474,20 +474,6 @@ button {
   text-align: center;
 }
 
-.login-bean,
-.result-bean {
-  position: absolute;
-  display: block;
-  pointer-events: none;
-  user-select: none;
-  -webkit-user-drag: none;
-}
-
-.login-bean { z-index: 1; }
-.login-bean-1 { left: 24px; top: 58%; width: 46px; transform: rotate(2deg); }
-.login-bean-2 { right: 26px; top: 25%; width: 42px; transform: rotate(5deg); }
-.login-bean-3 { right: 68px; bottom: 34px; width: 41px; transform: rotate(-2deg); }
-
 /* =========================================================
    RESULT SCREEN
    ========================================================= */
@@ -580,11 +566,6 @@ button {
   font-size: 14px;
   line-height: 1.55;
 }
-
-.result-bean { z-index: 0; }
-.result-bean-1 { left: max(4%, calc(50% - 430px)); top: 22%; width: 56px; transform: rotate(8deg) scale(1.08); }
-.result-bean-2 { right: max(4%, calc(50% - 430px)); top: 43%; width: 49px; transform: rotate(-4deg) scale(1.12); }
-.result-bean-3 { left: max(8%, calc(50% - 360px)); bottom: 10%; width: 50px; transform: rotate(7deg); }
 
 .error-layer {
   z-index: 70;
