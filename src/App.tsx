@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useRef, useState } from 'react';
 import { figmaAssets } from './lib/figmaAssets';
 import { hasSupabaseConfig, supabase } from './lib/supabase';
 import type { DrawResult, PrizeRank } from './types';
+import './offline-exact.css';
 
 const PRIZE_META: Record<PrizeRank, { label: string; name: string }> = {
   1: { label: '1등', name: '진커피 · 망고산도' },
@@ -240,62 +241,73 @@ function LoginScreen({
   onStudentIdChange: (value: string) => void;
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
 }) {
+  const checking = error.includes('확인하고');
+
   return (
-    <div className="login-screen refined-login">
-      <div className="login-grid" aria-hidden="true" />
+    <div className="offline-lucky-login">
+      <div className="grid-background" aria-hidden="true" />
+      <main className="offline-page-shell">
+        <header className="app-header">
+          <div className="brand-lockup">
+            <img src="/assets/cafe-moca-logo.png" alt="Cafe Moca" className="brand-logo" />
+            <span className="header-label">OFFLINE LUCKY DRAW</span>
+          </div>
+          <div className="header-badge">ONLINE → OFFLINE</div>
+        </header>
 
-      <header className="moca-header">
-        <div className="moca-brand" aria-label="Cafe Moca">
-          <span className="moca-brand-cafe">Cafe</span>
-          <span className="moca-brand-moca">Moca</span>
-        </div>
-        <span className="moca-header-caption">OFFLINE LUCKY DRAW</span>
-        <span className="moca-header-pill">CAFE MOCA POP-UP</span>
-      </header>
-
-      <div className="login-app-shell simple-login-shell">
-        <div className="simple-login-copy">
-          <p className="login-hero-kicker">오늘의 CAFE MOCA</p>
-          <h1>럭키드로우에 참여해볼까요?</h1>
-          <p className="login-hero-description">
-            온라인 설문과 오프라인 부스 참여를<br />모두 완료한 학우만 참여할 수 있어요.
-          </p>
-        </div>
-
-        <form className="login-panel simple-login-panel" onSubmit={onSubmit}>
-          <p className="login-panel-kicker">참여 확인</p>
-          <h2>학번을 입력해주세요.</h2>
-          <p className="login-panel-description">참여 완료 여부를 확인한 뒤 럭키드로우가 시작돼요.</p>
-
-          <label className="student-label" htmlFor="student-id">학번</label>
-          <input
-            id="student-id"
-            className={`student-input ${error && !error.includes('확인하고') ? 'student-input-error' : ''}`}
-            type="text"
-            inputMode="numeric"
-            autoComplete="off"
-            autoFocus
-            placeholder="학번 (ex.2026000000)"
-            value={studentId}
-            onChange={(event) => onStudentIdChange(event.target.value)}
-            aria-invalid={Boolean(error && !error.includes('확인하고'))}
-            aria-describedby={error ? 'student-error' : undefined}
-          />
-
-          <div className="login-message-row">
-            {error ? <p id="student-error" className={error.includes('확인하고') ? 'student-checking' : 'student-error'}>{error}</p> : <span />}
+        <section className="web-surface intro-surface">
+          <div className="beans" aria-hidden="true">
+            <span className="bean"><span className="bean-crease" /></span>
+            <span className="bean"><span className="bean-crease" /></span>
+            <span className="bean"><span className="bean-crease" /></span>
+            <span className="bean"><span className="bean-crease" /></span>
           </div>
 
-          <button className="login-button" type="submit" disabled={!studentId.trim() || error.includes('확인하고')}>
-            참여 확인하기 <span aria-hidden="true">→</span>
-          </button>
-          <p className="login-note">온라인 + 오프라인 참여 완료 학번만 입장할 수 있어요.</p>
-        </form>
-      </div>
+          <div className="intro-copy">
+            <p className="kicker">오프라인 이벤트 참여</p>
+            <h1><span className="marker">럭키드로우</span><br />참여해볼까요?</h1>
+            <p className="body-copy">온라인 설문과 오프라인 부스 참여를<br />모두 완료한 학우만 참여할 수 있어요.</p>
+          </div>
+
+          <section className="entry-card">
+            <p className="kicker">참여 확인</p>
+            <h2>학번을 입력해주세요.</h2>
+            <p className="helper">참여 완료 여부를 확인한 뒤 럭키드로우가 시작돼요.</p>
+
+            <form onSubmit={onSubmit}>
+              <label htmlFor="student-id">학번</label>
+              <input
+                id="student-id"
+                className={error && !checking ? 'input-error' : ''}
+                type="text"
+                inputMode="numeric"
+                autoComplete="off"
+                autoFocus
+                placeholder="2026XXXXXX"
+                value={studentId}
+                onChange={(event) => onStudentIdChange(event.target.value)}
+                aria-invalid={Boolean(error && !checking)}
+                aria-describedby={error ? 'student-error' : undefined}
+              />
+
+              <div className="message-row">
+                {error ? (
+                  <p id="student-error" className={checking ? 'checking-text' : 'error-text'}>{error}</p>
+                ) : <span />}
+              </div>
+
+              <button className="btn" type="submit" disabled={!studentId.trim() || checking}>
+                {checking ? '확인 중...' : <>시작하기 <span aria-hidden="true">→</span></>}
+              </button>
+            </form>
+
+            <p className="microcopy">온라인 + 오프라인 참여 완료 학번만 입장할 수 있어요.</p>
+          </section>
+        </section>
+      </main>
     </div>
   );
 }
-
 function ResultScreen({
   result,
   prize,
