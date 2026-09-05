@@ -2,7 +2,7 @@ import { FormEvent, useEffect, useRef, useState } from 'react';
 import { figmaAssets } from './lib/figmaAssets';
 import { hasSupabaseConfig, supabase } from './lib/supabase';
 import type { DrawResult, PrizeRank } from './types';
-import './offline-exact.css';
+import './offline-exact-v2.css';
 
 const PRIZE_META: Record<PrizeRank, { label: string; name: string }> = {
   1: { label: '1등', name: '진커피 · 망고산도' },
@@ -245,8 +245,9 @@ function LoginScreen({
 
   return (
     <div className="offline-lucky-login">
-      <div className="grid-background" aria-hidden="true" />
-      <main className="offline-page-shell">
+      <main className="page-shell">
+        <div className="grid-background" aria-hidden="true" />
+
         <header className="app-header">
           <div className="brand-lockup">
             <img src="/assets/cafe-moca-logo.png" alt="Cafe Moca" className="brand-logo" />
@@ -257,15 +258,15 @@ function LoginScreen({
 
         <section className="web-surface intro-surface">
           <div className="beans" aria-hidden="true">
-            <span className="bean"><span className="bean-crease" /></span>
-            <span className="bean"><span className="bean-crease" /></span>
-            <span className="bean"><span className="bean-crease" /></span>
-            <span className="bean"><span className="bean-crease" /></span>
+            <span className="bean" style={{ left:'7%', width:20, height:31, opacity:.20, ['--r' as string]:'-24deg', ['--delay' as string]:'-1.2s', ['--duration' as string]:'7.8s', ['--drift' as string]:'-18px' }}><span className="bean-crease" /></span>
+            <span className="bean" style={{ left:'19%', width:24, height:37.2, opacity:.16, ['--r' as string]:'18deg', ['--delay' as string]:'-5.2s', ['--duration' as string]:'9.6s', ['--drift' as string]:'28px' }}><span className="bean-crease" /></span>
+            <span className="bean" style={{ left:'38%', width:17, height:26.35, opacity:.16, ['--r' as string]:'-14deg', ['--delay' as string]:'-2.8s', ['--duration' as string]:'8.2s', ['--drift' as string]:'-16px' }}><span className="bean-crease" /></span>
+            <span className="bean" style={{ left:'53%', width:22, height:34.1, opacity:.15, ['--r' as string]:'31deg', ['--delay' as string]:'-7.4s', ['--duration' as string]:'10.4s', ['--drift' as string]:'40px' }}><span className="bean-crease" /></span>
           </div>
 
           <div className="intro-copy">
-            <p className="kicker">오프라인 이벤트 참여</p>
-            <h1><span className="marker">럭키드로우</span><br />참여해볼까요?</h1>
+            <p className="kicker">오프라인 이벤트 마지막 단계</p>
+            <h1><span className="marker">럭키드로우에</span><br />참여해주세요.</h1>
             <p className="body-copy">온라인 설문과 오프라인 부스 참여를<br />모두 완료한 학우만 참여할 수 있어요.</p>
           </div>
 
@@ -273,7 +274,6 @@ function LoginScreen({
             <p className="kicker">참여 확인</p>
             <h2>학번을 입력해주세요.</h2>
             <p className="helper">참여 완료 여부를 확인한 뒤 럭키드로우가 시작돼요.</p>
-
             <form onSubmit={onSubmit}>
               <label htmlFor="student-id">학번</label>
               <input
@@ -289,18 +289,11 @@ function LoginScreen({
                 aria-invalid={Boolean(error && !checking)}
                 aria-describedby={error ? 'student-error' : undefined}
               />
-
-              <div className="message-row">
-                {error ? (
-                  <p id="student-error" className={checking ? 'checking-text' : 'error-text'}>{error}</p>
-                ) : <span />}
-              </div>
-
-              <button className="btn" type="submit" disabled={!studentId.trim() || checking}>
+              {error && <p id="student-error" className="error-text">{error}</p>}
+              <button className="btn btn-dark" type="submit" disabled={!studentId.trim() || checking}>
                 {checking ? '확인 중...' : <>시작하기 <span aria-hidden="true">→</span></>}
               </button>
             </form>
-
             <p className="microcopy">온라인 + 오프라인 참여 완료 학번만 입장할 수 있어요.</p>
           </section>
         </section>
