@@ -8,7 +8,7 @@ const PRIZE_META: Record<PrizeRank, { label: string; name: string }> = {
   1: { label: '1등', name: '진커피 · 망고산도' },
   2: { label: '2등', name: '이치제과 · 플레인 베이글' },
   3: { label: '3등', name: '버터떡' },
-  4: { label: '4등', name: '컴포즈커피 아메리카노' },
+  4: { label: '4등', name: '협찬품 기본 제공' },
 };
 
 const BALLS = [
@@ -308,6 +308,8 @@ function ResultScreen({
   result: DrawResult;
   prize: { label: string; name: string };
 }) {
+  const nextCoffeeTime = formatCoffeeDeliveryTime(result.coffee_next_delivery_at);
+
   return (
     <div className="result-layer result-layer-prize" role="dialog" aria-modal="true" aria-labelledby="result-title">
       <img className="result-bean result-bean-1" src={figmaAssets.bean1} alt="" draggable={false} aria-hidden="true" />
@@ -323,6 +325,17 @@ function ResultScreen({
         <p className="result-celebrate">LUCKY YOU!</p>
         <h1 id="result-title">{prize.label} 당첨!</h1>
         <p className="result-prize">{result.prize_name || prize.name}</p>
+        {result.sponsor_included && result.prize_rank !== 4 && (
+          <p className="result-help">협찬품은 기본으로 함께 제공돼요.</p>
+        )}
+        {result.coffee_awarded ? (
+          <p className="result-help">컴포즈커피 아메리카노도 함께 제공돼요.</p>
+        ) : (
+          <p className="result-help">
+            컴포즈커피는 현재 소진되어 이번 참여에는 제공되지 않아요.
+            {nextCoffeeTime ? ` ${nextCoffeeTime} 입고분부터 다시 선착순으로 제공돼요.` : ''}
+          </p>
+        )}
       </div>
     </div>
   );
@@ -335,6 +348,19 @@ function TwirlTransition({ mode }: { mode: 'cover' | 'reveal' }) {
       <img className="twirl-star twirl-star-main" src={figmaAssets.transitionStar} alt="" draggable={false} />
     </div>
   );
+}
+
+function formatCoffeeDeliveryTime(value: string | null) {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+
+  return new Intl.DateTimeFormat('ko-KR', {
+    timeZone: 'Asia/Seoul',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).format(date);
 }
 
 function normalizeEligibilityReason(reason?: string) {
