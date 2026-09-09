@@ -8,7 +8,7 @@ const PRIZE_META: Record<PrizeRank, { label: string; name: string }> = {
   1: { label: '1등', name: '진커피 · 망고산도' },
   2: { label: '2등', name: '이치제과 · 플레인 베이글' },
   3: { label: '3등', name: '버터떡' },
-  4: { label: '4등', name: '협찬품 기본 제공' },
+  4: { label: '4등', name: '컴포즈커피 아메리카노' },
 };
 
 const BALLS = [
@@ -52,8 +52,6 @@ export default function App() {
   useEffect(() => {
     if (phase !== 'result') return;
 
-    // 행사장 공용 화면: 별도 버튼 없이 결과를 충분히 보여준 뒤
-    // 자동으로 다음 참여자의 학번 입력 화면으로 돌아갑니다.
     const timer = window.setTimeout(() => {
       resetForNextParticipant();
     }, 9000);
@@ -121,7 +119,6 @@ export default function App() {
     setErrorMessage('');
     setPhase('drawing');
 
-    // 손잡이/캡슐 모션과 Twirl cover가 끝날 때까지 결과를 노출하지 않습니다.
     const minimumCover = new Promise((resolve) => setTimeout(resolve, 1120));
 
     try {
@@ -301,6 +298,7 @@ function LoginScreen({
     </div>
   );
 }
+
 function ResultScreen({
   result,
   prize,
@@ -309,6 +307,7 @@ function ResultScreen({
   prize: { label: string; name: string };
 }) {
   const nextCoffeeTime = formatCoffeeDeliveryTime(result.coffee_next_delivery_at);
+  const isCoffeeFallback = result.prize_rank === 4 && !result.coffee_awarded;
 
   return (
     <div className="result-layer result-layer-prize" role="dialog" aria-modal="true" aria-labelledby="result-title">
@@ -325,15 +324,15 @@ function ResultScreen({
         <p className="result-celebrate">LUCKY YOU!</p>
         <h1 id="result-title">{prize.label} 당첨!</h1>
         <p className="result-prize">{result.prize_name || prize.name}</p>
-        {result.sponsor_included && result.prize_rank !== 4 && (
-          <p className="result-help">협찬품은 기본으로 함께 제공돼요.</p>
+
+        {result.prize_rank === 4 && result.coffee_awarded && (
+          <p className="result-help">컴포즈커피 아메리카노를 받아가세요.</p>
         )}
-        {result.coffee_awarded ? (
-          <p className="result-help">컴포즈커피 아메리카노도 함께 제공돼요.</p>
-        ) : (
+
+        {isCoffeeFallback && (
           <p className="result-help">
-            컴포즈커피는 현재 소진되어 이번 참여에는 제공되지 않아요.
-            {nextCoffeeTime ? ` ${nextCoffeeTime} 입고분부터 다시 선착순으로 제공돼요.` : ''}
+            현재 컴포즈커피가 소진되어 협찬품으로 제공돼요.
+            {nextCoffeeTime ? ` 다음 컴포즈 입고는 ${nextCoffeeTime}입니다.` : ''}
           </p>
         )}
       </div>
@@ -384,6 +383,8 @@ function normalizeError(message: string) {
   if (lower.includes('not_registered_participant')) return '참가자 명단에 없는 학번이에요.';
   if (lower.includes('online_not_completed')) return '온라인 설문을 완료한 뒤 참여할 수 있어요.';
   if (lower.includes('offline_not_completed')) return '오프라인 부스 참여 확인이 필요해요. 운영진에게 문의해 주세요.';
-  if (lower.includes('sold out') || lower.includes('no prize')) return '준비된 럭키드로우 상품이 모두 소진되었습니다.';
+  if (lower.includes('sold out') || lower.includes('no prize') || lower.includes('prize_inventory_empty')) {
+    return '준비된 럭키드로우 상품이 모두 소진되었습니다.';
+  }
   return message;
 }
