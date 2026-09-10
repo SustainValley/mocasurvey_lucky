@@ -113,8 +113,44 @@ begin
   into v_total
   from moca_lucky_private.available_prize_tickets(v_local_time);
 
+  -- 기존 197명분 추첨권이 모두 소진되어도 럭키드로우를 막지 않는다.
+  -- 이후 참여자는 재고 차감 없이 협찬품으로 기록한다.
   if v_total <= 0 then
-    raise exception 'PRIZE_INVENTORY_EMPTY';
+    insert into public.lucky_draw_student_results (
+      student_id,
+      prize_rank,
+      prize_code,
+      prize_name,
+      drawn_at,
+      coffee_awarded,
+      coffee_unavailable_reason,
+      coffee_next_delivery_at,
+      sponsor_included
+    ) values (
+      v_student_id,
+      4,
+      'COMPOSE_AMERICANO',
+      '협찬품',
+      v_at,
+      false,
+      'out_of_stock',
+      null,
+      true
+    )
+    returning * into v_result;
+
+    return query select
+      v_result.id,
+      v_result.prize_rank,
+      v_result.prize_code,
+      v_result.prize_name,
+      false,
+      v_result.drawn_at,
+      v_result.coffee_awarded,
+      v_result.coffee_unavailable_reason,
+      v_result.coffee_next_delivery_at,
+      v_result.sponsor_included;
+    return;
   end if;
 
   v_pick := floor(random() * v_total)::integer + 1;
